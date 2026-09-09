@@ -31,14 +31,20 @@ const CATEGORY_BRIEF: Record<ChallengeCategory, string> = {
   mobility: 'movement, flow and street design',
 };
 
-/** How the mechanism half should be photographed, by kind of source. */
+/**
+ * How the mechanism half should be photographed, by kind of source.
+ *
+ * Deliberately not fixed at macro range: these subjects run from a beetle's
+ * elytra to a termite mound to an alluvial fan, so the framing is left to the
+ * per-solution description and only the photographic quality is directed here.
+ */
 const MECHANISM_STYLE: Record<SourceType, string> = {
   animal:
-    'Wildlife macro photograph, natural habitat, razor-sharp focus on the anatomical structure, shallow depth of field, natural daylight, National Geographic style',
+    'Natural history photograph in the wild habitat, razor-sharp focus on the structure that does the work, framing chosen to show that structure clearly, natural daylight, National Geographic style',
   plant:
-    'Botanical macro photograph, extreme close-up of the living tissue, natural daylight, shallow depth of field, scientific nature photography',
+    'Botanical photograph, precise detail of the living tissue that produces the effect, natural daylight, scientific nature photography',
   inanimate:
-    'Documentary nature photograph of the formation, geological detail and texture, natural daylight, wide tonal range, large-format landscape photography',
+    'Documentary landscape and geology photograph, texture and structure of the formation, natural daylight, wide tonal range, large-format photography',
 };
 
 /** Fallback phrasing when a solution has no authored visual description yet. */
