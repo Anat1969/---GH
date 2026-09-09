@@ -46,11 +46,9 @@ jobs:
         # makes deep links like /challenges/<id> load the app instead of a 404.
         run: cp dist/index.html dist/404.html
 
+      # Requires Pages to be enabled once under Settings > Pages > Source:
+      # GitHub Actions. The default workflow token cannot turn it on.
       - uses: actions/configure-pages@v5
-        # Turns Pages on for the repo the first time this runs, so no manual
-        # visit to Settings is needed.
-        with:
-          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
