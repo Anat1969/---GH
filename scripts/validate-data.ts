@@ -5,7 +5,7 @@
  * enums to catch a bad edit — so CI runs this before every build. Editing the
  * data by hand is the intended workflow, and this is what makes that safe.
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -86,6 +86,32 @@ solutions.forEach((s, i) => {
 
   if (typeof s.source_type !== 'string' || !SOURCE_TYPES.has(s.source_type)) {
     errors.push(`${where}: source_type "${String(s.source_type)}" is not one of ${[...SOURCE_TYPES].join(', ')}`);
+  }
+
+  // A card has two picture frames. Each needs a visual description to generate
+  // from, and an image path that actually points at a file once generated.
+  for (const slot of ['mechanism', 'application'] as const) {
+    const visualField = `visual_${slot}`;
+    const imageField = `image_${slot}`;
+
+    const visual = s[visualField];
+    if (visual == null || (typeof visual === 'string' && !visual.trim())) {
+      warnings.push(`${where}: no ${visualField}, so its prompt falls back to generic wording`);
+    } else if (typeof visual !== 'string') {
+      errors.push(`${where}: ${visualField} must be a string or null`);
+    }
+
+    const image = s[imageField];
+    if (image == null) continue;
+    if (typeof image !== 'string' || !image.trim()) {
+      errors.push(`${where}: ${imageField} must be a non-empty string or null`);
+    } else if (/^https?:/.test(image)) {
+      warnings.push(`${where}: ${imageField} points at an external URL, which can disappear`);
+    } else if (image.startsWith('/')) {
+      errors.push(`${where}: ${imageField} "${image}" must be relative to public/, not start with "/"`);
+    } else if (!existsSync(join(root, 'public', image))) {
+      errors.push(`${where}: ${imageField} "${image}" has no file at public/${image}`);
+    }
   }
 
   if (s.challenge_id == null) {

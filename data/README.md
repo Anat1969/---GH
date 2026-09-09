@@ -47,7 +47,10 @@ npm run validate:data
   "title": "נמלת הסהרה הכסופה (Saharan Silver Ant)",
   "mechanism": "שערות משולשות על גוף הנמלה מחזירות אור אינפרא-אדום...",
   "application": "ציפויי מעטפת בניין במבנה ננומטרי...",
-  "image_url": null,
+  "image_mechanism": "solutions/5c4b769d-...-mechanism.jpg",
+  "image_application": "solutions/5c4b769d-...-application.jpg",
+  "visual_mechanism": "dense triangular silver hairs covering the ant's body...",
+  "visual_application": "a building envelope clad in a metallic-white...",
   "metrics": { "coolingEffect": 40, "energySavings": 45 }
 }
 ```
@@ -57,11 +60,17 @@ npm run validate:data
 | `id` | כן | מזהה ייחודי |
 | `challenge_id` | כן | חייב להתאים ל-`id` של אתגר קיים |
 | `source_type` | כן | `animal`, `plant` או `inanimate` |
-| `title` | כן | השם באנגלית בסוגריים משמש לבניית הפרומפט להמחשה |
-| `mechanism` | כן | המנגנון בטבע |
-| `application` | כן | היישום האדריכלי |
-| `image_url` | לא | קישור לתמונה, נתיב יחסי מתוך `public/`, או `null` |
+| `title` | כן | השם באנגלית בסוגריים משמש כנושא של הפרומפט |
+| `mechanism` | כן | המנגנון בטבע, בעברית |
+| `application` | כן | היישום האדריכלי, בעברית |
+| `image_mechanism` | לא | נתיב יחסי מתוך `public/`, או `null` |
+| `image_application` | לא | נתיב יחסי מתוך `public/`, או `null` |
+| `visual_mechanism` | מומלץ | תיאור חזותי באנגלית של המנגנון — ממנו נבנה הפרומפט |
+| `visual_application` | מומלץ | תיאור חזותי באנגלית של היישום הבנוי |
 | `metrics` | לא | ראו טבלת המדדים למטה. אפשר לכלול רק חלק מהם |
+
+לכל פתרון שתי תמונות ולא אחת: המנגנון כפי שהוא נראה בטבע, והיישום האדריכלי.
+זו הסיבה לשני שדות `image_*` ולשני שדות `visual_*`.
 
 ### מדדים
 
@@ -79,10 +88,38 @@ npm run validate:data
 
 ---
 
-## הוספת תמונות
+## תמונות
 
-הדרך היציבה: לשים את הקובץ ב-`public/solutions/` ולהצביע עליו מ-`image_url`,
-למשל `"image_url": "solutions/termite-mound.jpg"`. הנתיב יחסי, כדי שיעבוד גם
-כשהאתר מוגש מתת-נתיב ב-GitHub Pages.
+### ייצור אוטומטי
 
-תמונה שמעלים דרך הממשק נשמרת רק בדפדפן של אותו משתמש ואינה נכנסת לריפו.
+```bash
+npm run generate:images -- --dry-run          # רק מדפיס את הפרומפטים
+FAL_KEY=xxxx npm run generate:images -- --limit 4   # מייצר ארבע לבדיקה
+FAL_KEY=xxxx npm run generate:images          # מייצר את כל מה שחסר
+```
+
+הסקריפט כותב קבצים ל-`public/solutions/` ומעדכן את `image_mechanism` ו-
+`image_application` בקובץ הזה. אחרי שהוא רץ צריך רק לעשות commit לשני אלה —
+מאותו רגע התמונות חיות בגיט ומוגשות מהאתר, בלי שום קריאה ל-API בזמן ריצה.
+
+מפתח `FAL_KEY` מתקבל ב-https://fal.ai/dashboard/keys. הוא נחוץ רק בזמן הייצור,
+לא בזמן הבנייה ולא בזמן הצפייה באתר.
+
+### הוספה ידנית
+
+לשים קובץ ב-`public/solutions/` ולהצביע עליו, למשל
+`"image_mechanism": "solutions/termite-mound.jpg"`. הנתיב יחסי כדי שיעבוד גם
+כשהאתר מוגש מתת-נתיב ב-GitHub Pages, ובודק התקינות מוודא שהקובץ באמת קיים.
+
+### תמונה שמשתמש מעלה
+
+נשמרת ב-`localStorage` של אותו דפדפן בלבד, דורסת את התמונה שבריפו עבור אותו
+משתמש, ואינה נכנסת לגיט.
+
+---
+
+## שינוי סגנון התמונות
+
+הטקסט הספציפי לכל פתרון יושב כאן, בשדות `visual_*`. הסגנון המשותף — סוג
+הצילום, התאורה, איכות הרינדור — יושב ב-`src/lib/image-prompt.ts`. שינוי שם
+משנה את הפרומפט של כל 144 התמונות בבת אחת.

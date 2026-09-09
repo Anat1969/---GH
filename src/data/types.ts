@@ -39,8 +39,17 @@ export interface Solution {
   title: string;
   mechanism: string;
   application: string;
-  image_url: string | null;
   metrics: ImpactMetrics;
+
+  /**
+   * A card shows two pictures, not one: the mechanism as it appears in nature,
+   * and the architectural application. Each slot carries an image path and an
+   * English visual description that the prompt builder turns into a prompt.
+   */
+  image_mechanism: string | null;
+  image_application: string | null;
+  visual_mechanism: string | null;
+  visual_application: string | null;
 }
 
 export const categoryLabels: Record<ChallengeCategory, string> = {

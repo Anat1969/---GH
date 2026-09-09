@@ -32,8 +32,11 @@ export const solutions: Solution[] = (solutionsRaw as unknown as Solution[]).map
   title: s.title,
   mechanism: s.mechanism,
   application: s.application,
-  image_url: s.image_url,
   metrics: (s.metrics ?? {}) as ImpactMetrics,
+  image_mechanism: s.image_mechanism ?? null,
+  image_application: s.image_application ?? null,
+  visual_mechanism: s.visual_mechanism ?? null,
+  visual_application: s.visual_application ?? null,
 }));
 
 const challengeById = new Map(challenges.map((c) => [c.id, c]));

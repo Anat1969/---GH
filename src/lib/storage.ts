@@ -30,25 +30,32 @@ export const WORKSPACE_KEY = 'biourban-workspace';
 export const THEME_KEY = 'biourban-theme';
 const IMAGES_KEY = 'biourban-solution-images';
 
-/** Images a visitor attaches to a solution card, kept as data URLs per solution. */
-export function getStoredImage(solutionId: string): string | null {
-  return readJSON<Record<string, string>>(IMAGES_KEY, {})[solutionId] ?? null;
+/**
+ * Images a visitor attaches to a card, kept as data URLs. A card has two
+ * independent frames, so the key carries the slot as well as the solution.
+ */
+function imageKey(solutionId: string, slot: string): string {
+  return `${solutionId}:${slot}`;
 }
 
-export function storeImage(solutionId: string, dataUrl: string): void {
+export function getStoredImage(solutionId: string, slot: string): string | null {
+  return readJSON<Record<string, string>>(IMAGES_KEY, {})[imageKey(solutionId, slot)] ?? null;
+}
+
+export function storeImage(solutionId: string, slot: string, dataUrl: string): void {
   const all = readJSON<Record<string, string>>(IMAGES_KEY, {});
-  all[solutionId] = dataUrl;
+  all[imageKey(solutionId, slot)] = dataUrl;
   writeJSON(IMAGES_KEY, all);
 }
 
-export function clearStoredImage(solutionId: string): void {
+export function clearStoredImage(solutionId: string, slot: string): void {
   const all = readJSON<Record<string, string>>(IMAGES_KEY, {});
-  delete all[solutionId];
+  delete all[imageKey(solutionId, slot)];
   writeJSON(IMAGES_KEY, all);
 }
 
 /**
- * Turns an `image_url` from the data files into a URL the browser can load.
+ * Turns an image path from the data files into a URL the browser can load.
  *
  * A relative path like "solutions/termite-mound.jpg" would otherwise resolve
  * against the current route (/challenges/<id>/...) rather than the site root,
