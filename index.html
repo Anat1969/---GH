@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BioUrban | מנוע האינטליגנציה הביו-עירונית</title>
+    <meta
+      name="description"
+      content="פתרונות ביומימיקרי לאתגרי תכנון עירוני — השראה מהטבע לעיצוב ערים חכמות ובריאות."
+    />
+    <meta name="color-scheme" content="dark light" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="BioUrban | מנוע האינטליגנציה הביו-עירונית" />
+    <meta
+      property="og:description"
+      content="פתרונות ביומימיקרי לאתגרי תכנון עירוני — השראה מהטבע לעיצוב ערים חכמות ובריאות."
+    />
+    <meta name="twitter:card" content="summary" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // Set the theme class before React mounts so the page never flashes the
+      // wrong colours. Kept in sync with src/contexts/ThemeContext.tsx.
+      (function () {
+        try {
+          var stored = localStorage.getItem('biourban-theme');
+          var theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          if (theme === 'light') document.documentElement.classList.add('light');
+        } catch (e) {
+          // Site data blocked — fall through to the dark default.
+        }
+      })();
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
