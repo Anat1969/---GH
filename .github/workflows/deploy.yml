@@ -33,7 +33,16 @@ jobs:
         run: npm run validate:data
 
       - name: Type-check
-        run: npm run typecheck
+        # Re-emit each tsc diagnostic as a workflow annotation, so the reason a
+        # deploy failed is visible on the run page without opening the log.
+        run: |
+          set -o pipefail
+          if ! npm run typecheck 2>&1 | tee tsc.log; then
+            grep -E 'error TS' tsc.log | head -40 | while IFS= read -r line; do
+              echo "::error::$line"
+            done
+            exit 1
+          fi
 
       - name: Build
         # The repo name becomes the URL prefix on github.io.

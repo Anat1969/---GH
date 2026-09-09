@@ -10,8 +10,12 @@
  * The subject and the visual description come from the data, so improving one
  * prompt means editing `data/solutions.json`; the style and quality direction
  * live here, so changing the look of every image is a one-line change.
+ *
+ * Imports here stay relative rather than using the `@/` alias, because
+ * `scripts/generate-images.ts` imports this same module — the app and the
+ * generator must never drift apart on what a prompt says.
  */
-import type { ChallengeCategory, Solution, SourceType } from '@/data';
+import type { ChallengeCategory, Solution, SourceType } from '../data/types';
 
 export type ImageSlot = 'mechanism' | 'application';
 
@@ -45,6 +49,21 @@ const MECHANISM_FALLBACK: Record<SourceType, string> = {
 };
 
 /**
+ * The architectural half is a design brief, not a mood board. It asks for a
+ * buildable minimalist building in which the borrowed principle *is* the
+ * architecture — not a sculptural fantasy with the principle applied as
+ * decoration.
+ */
+const ARCHITECTURE_DIRECTION = [
+  'Pragmatic, innovative, minimalist contemporary architecture that distils the biological',
+  'principle into buildable form: the mechanism is the architecture, not applied ornament.',
+  'Clear structural logic, honest materials — exposed concrete, glass, weathered steel, timber —',
+  'restrained neutral palette, precise detailing, no decoration.',
+  'Professional architectural photography, eye-level perspective, real urban context,',
+  'people for scale, soft overcast daylight, clean composition, sharp focus throughout.',
+].join(' ');
+
+/**
  * Pulls the Latin-script name out of a title, which the data writes either
  * inside parentheses — "לוטוס (Lotus Leaf)" — or before them —
  * "Sphagnum (טחב כבול)".
@@ -58,7 +77,7 @@ export function englishName(title: string): string | null {
 }
 
 /** Directives that keep the set looking like one library rather than a grab bag. */
-const COMMON = 'No text, no lettering, no watermark, no logos.';
+const COMMON = 'No text, no lettering, no watermark, no logos, no signage.';
 
 export function buildMechanismPrompt(solution: Solution): string {
   const subject = englishName(solution.title) ?? 'the natural mechanism';
@@ -81,16 +100,13 @@ export function buildApplicationPrompt(
   const subject = englishName(solution.title);
   const visual =
     solution.visual_application?.trim() ||
-    'a contemporary building whose facade and structure express the same principle';
+    'a contemporary building whose structure expresses the same principle';
 
   return [
     `Architectural visualisation for ${brief}.`,
     `${capitalise(visual)}.`,
-    subject
-      ? `The design principle is borrowed from ${subject} and is clearly legible in the built form.`
-      : '',
-    'Photorealistic architectural rendering, eye-level perspective, contemporary urban context,',
-    'people for scale, soft overcast daylight, restrained material palette.',
+    subject ? `The principle is borrowed from ${subject} and is legible in the built form.` : '',
+    ARCHITECTURE_DIRECTION,
     COMMON,
   ]
     .filter(Boolean)
