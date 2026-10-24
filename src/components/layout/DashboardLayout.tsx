@@ -31,6 +31,7 @@ export default function DashboardLayout() {
           {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
         </button>
 
+        <div className="flex items-center gap-2">
         {isMobile && (
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
@@ -48,6 +49,8 @@ export default function DashboardLayout() {
             </SheetContent>
           </Sheet>
         )}
+        <ai-menu />
+        </div>
       </header>
 
       <div className="flex-1 flex min-h-0">
